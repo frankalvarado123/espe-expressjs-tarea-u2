@@ -18,6 +18,7 @@ model User {
   password     String
   role         Role
   appointments Appointment[]
+  prestamos    Prestamo[]
 }
 
 model Appointment {
@@ -30,13 +31,32 @@ model Appointment {
 }
 
 model TimeBlock {
-  id        Int      @id @default(autoincrement())
-  startTime DateTime
-  endTime   DateTime
+  id           Int           @id @default(autoincrement())
+  startTime    DateTime
+  endTime      DateTime
   appointments Appointment[]
+}
+
+model Prestamo {
+  id               Int            @id @default(autoincrement())
+  userId           Int
+  user             User           @relation(fields: [userId], references: [id])
+  libroId          String? // _id de MongoDB (24 hex), sin FK
+  fechaPrestamo    DateTime       @default(now())
+  fechaVencimiento DateTime
+  fechaDevolucion  DateTime? // null = préstamo activo
+  estado           EstadoPrestamo @default(ACTIVO)
+
+  @@index([libroId])
+  @@index([userId])
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+enum EstadoPrestamo {
+  ACTIVO
+  DEVUELTO
 }

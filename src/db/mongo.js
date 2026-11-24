@@ -1,8 +1,15 @@
+// Conexión a MongoDB con Mongoose. Una sola conexión para toda la app.
 const mongoose = require("mongoose");
 
-const connectMongo = async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB");
-};
+async function connectMongo() {
+  const url = process.env.MONGODB_URI;
+  if (!url) throw new Error("Falta MONGODB_URI en el archivo .env");
+  await mongoose.connect(url);
+  console.log("MongoDB conectado");
+}
 
-module.exports = connectMongo;
+async function disconnectMongo() {
+  await mongoose.disconnect();
+}
+
+module.exports = { connectMongo, disconnectMongo, mongoose };
